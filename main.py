@@ -4,7 +4,7 @@
 import numpy
 import linecache
 
-from tkinter import *
+import tkinter as tk
 from tkinter import ttk
 #Variables
 	#List location default
@@ -62,6 +62,9 @@ def randJob(jobName, quantity):
 			print('loop 2 success')
 
 			
+window = tk.Tk()
+
+window.mainloop()
 randName(listName, amount)
 randJob(listJob, amount)
 
