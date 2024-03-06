@@ -1,0 +1,39 @@
+Butcher
+Baker
+Stonemason
+Weaver
+Winemaker
+Fisherman
+Farmer
+Trumpet Player
+Cobbler
+Wheelwright
+Roofer
+Locksmith
+Tanner
+Tax Collector
+Belt maker
+Merchant
+Armourer
+Carpenter
+Cook
+Blacksmith
+Servant
+Dyer
+Goldsmith
+Hatmaker
+Tailor
+Soldier
+Tinsmith
+Carter
+Spurrier
+Birdcatcher
+Woodcutter
+Painter
+Tavern Keeper
+Sacristan
+Sadler
+Messenger
+Ropemaker
+Farrier
+Miller
