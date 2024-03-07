@@ -142,6 +142,7 @@ def main():
 window = tk.Tk()
 ttk.Style().theme_use('clam')
 window.configure(bg='#9932cc')
+window.title('NPC-reator')
 #Name
 nameSelect=tk.StringVar()
 nameSelect.set('N/A')
