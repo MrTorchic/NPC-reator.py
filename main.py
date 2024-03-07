@@ -24,7 +24,10 @@ numList = [
 140,
 160,
 180,
-200
+200,
+400,
+800,
+1000
 ]
 amount=0
 
@@ -137,27 +140,35 @@ def main():
 
 #Init Window
 window = tk.Tk()
+ttk.Style().theme_use('clam')
+window.configure(bg='#9932cc')
 #Name
 nameSelect=tk.StringVar()
 nameSelect.set('N/A')
-nameEntry=tk.OptionMenu(window, nameSelect,*nameFiles).grid(row=1,column=5)
-nameLabel=tk.Label(text='Name List:').grid(row=1,column=4)
+nameEntry=tk.OptionMenu(window, nameSelect,*nameFiles)
+nameEntry.configure(background="#dda0dd")
+nameEntry.grid(row=0,column=8)
+nameLabel=tk.Label(text='Name List:',bg='#dda0dd').grid(row=0,column=6)
 #Job
 jobSelect = tk.StringVar()
 jobSelect.set('N/A')
-jobEntry = tk.OptionMenu(window, jobSelect,*jobFiles).grid(row=2,column=5)
+jobEntry = tk.OptionMenu(window, jobSelect,*jobFiles)
+jobEntry.configure(background="#dda0dd")
+jobEntry.grid(row=0,column=10)
 jobStatus= tk.IntVar()
-jobToggle= tk.Checkbutton(text='Job List:',variable=jobStatus).grid(row=2,column=4)
+jobToggle= tk.Checkbutton(text='Job List:',variable=jobStatus,bg='#dda0dd').grid(row=0,column=9)
 #Num
-numLabel = tk.Label(text='Quantity:').grid(row=3,column=4)
+numLabel = tk.Label(window,text='Quantity:',bg='#dda0dd').grid(row=0,column=11)
 numVal = tk.IntVar()
 numVal.set(5)
-numEntry = tk.OptionMenu(window, numVal, *numList).grid(row=3,column=5)
+numEntry = tk.OptionMenu(window, numVal, *numList)
+numEntry.configure(background="#dda0dd")
+numEntry.grid(row=0,column=12)
 #Other
-start = ttk.Button(text='Start',command=main).grid(row=0,column=2)
-output=tk.Text(height=10,width=100)
+start = tk.Button(window, text = 'Run', bg='#dda0dd', command=main).grid(row=0,column=3)
+output=tk.Text(height=25,width=50, bg='#e6e6fa')
 output.grid(row=0,column=1)
-label = ttk.Label(text='NPC-reator').grid(row=0,column=0)
+label = tk.Label(text='NPC-reator',bg='#dda0dd').grid(row=0,column=0)
 window.mainloop()
 
 
