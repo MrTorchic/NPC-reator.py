@@ -1,7 +1,7 @@
 
 # NPC-reate
 
-A tool to generate NPC Names and Occupations(TBD), currently supports CLI with plans for a GUI.
+A tool to generate NPC Names and Occupations, currently supports a Tkinter GUI.
 
 NPC-reate is made in Python on a linux laptop
 
