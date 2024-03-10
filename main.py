@@ -5,11 +5,12 @@ import numpy
 import linecache
 import tkinter as tk
 from tkinter import ttk
+import os
 from os import listdir
 from os.path import isfile, join
 from numpy.random import RandomState
-
-
+from datetime import *
+import subprocess
 #Variables
 	#List location default
 rng = numpy.random.default_rng()
@@ -40,90 +41,164 @@ occupationList = [
 	#A Merged List of the Two (if needed)
 mergedList = [
 ]
-jobPath = 'Lists/Jobs/'
-namePath = 'Lists/Names/'
+saveList=[
+]
+
+
+nameStr='init'
+jobPath = 'src/Lists/Jobs/'
+namePath = 'src/Lists/Names/'
 jobFiles = [f for f in listdir(jobPath) if isfile(join(jobPath, f))]
 nameFiles = [f for f in listdir(namePath) if isfile(join(namePath, f))]
 #File Lists
+def onExit():
+	lineNum=0
+	charNum=0
+	endStr='end-1c'
+	parta=f'{saveField.get(f"{lineNum+2}.{charNum}",tk.END)}'
+	partb='./latest.txt'
+
+	if parta!='': #If the file doesn't error out:
+		subprocess.run(f'echo "{parta[1:]}" > latest.txt',shell=True,check=True)
+		try:
+			subprocess.run(f'mv ./out/*.txt ./out/old/out-{date.today()}-{numpy.random.randint(0,1000)}.txt', shell=True, check=True)
+		except:
+			print('bypassed room service... stage 1')
+		try:
+			subprocess.run(f'mv {partb} ./out/', shell=True, check=True)
+		except:
+			print('bypassed room service... stage 2')
+	else:
+		print('nothing to write')
+	window.destroy()
+
+def save():
+	if savestateVal.get()==1:
+		saveField.delete('2.0',tk.END)
+	number=saveVal.get()
+	output=outputField.get(f'{number+1}.0',f'{number+1}.50')
+	saveField.insert(tk.END,f'\n{output}')
+
+buildOutputhas_run = False
+def buildOutput():
+	global buildOutputhas_run
+	if buildOutputhas_run:
+		return
+	if not buildOutputhas_run:
+		quantity = numVal.get()
+		for i in range(0,quantity+1):
+			saveList.append(i+1)
+		saveMenu=ttk.OptionMenu(window, saveVal, *saveList,style='TMenubutton')#.grid(row=0,column=12)
+		saveMenu=saveMenu.grid(row=3,column=3,sticky='nw')
+		saveField.insert('1.0','Save:')
+		buildOutputhas_run=True
+
 def main():
 	quantity = numVal.get()
 	amount = quantity
-	nameList.clear()
-	occupationList.clear()
-	with open(f'Lists/Names/{namefileVal.get()}') as f:
-		line_count = 0
-		for line in f:
-			line_count += 1
-		for i in range(0, quantity):
-			rand1=rng.integers(line_count)
-			rand2=rng.integers(line_count)
-			firstName = linecache.getline(f'Lists/Names/{namefileVal.get()}', rand1)
-			lastName = linecache.getline(f'Lists/Names/{namefileVal.get()}', rand2)
-			nameStr=f'First: {firstName.rstrip()} | Last: {lastName.rstrip()}'+'\n'
-			nameList.append(f'{nameStr}')
-	if jobState.get()==0: #Occupation not enable, make and append nameList
-		numpy.random.seed()
-		output.delete(0.0, tk.END)
-		num=0
-		for i in nameList:
-			output.insert(f'{num}.0',i)
-			for i in nameList:
-				if num<amount:
-					num+=1
-				else:
-					num=0
-	with open(f'Lists/Jobs/{jobfileVal.get()}') as g: #select randomJob
-		line_counta = 0
-		for line in g:
-			line_counta += 1
-		for i in range(0, quantity):
-			rand3 = rng.integers(line_counta)
-			randomJob = linecache.getline(f'Lists/Jobs/{jobfileVal.get()}', rand3)
-			occupationList.append(f'Occupation: {randomJob}')
-	if jobState.get()==1: #Merge
-		num=0
-		numpy.random.seed()
-		output.delete(0.0, tk.END)
-		mergedList.clear()
-		for ii in range(0, quantity):
-			print(mergedList)
-			mergedList.append(f'{nameList[ii].rstrip()} | {occupationList[ii].rstrip()}')
-			output.insert(f'{ii}.0',f'{mergedList[ii]}\n')
+	buildOutput()
+	outputField.delete('0.0',tk.END)
+	with open(f'src/Lists/Names/{namefileVal.get()}') as e: #select randomJob
+		line_countb = 0
+		for line in e:
+			line_countb += 1
 
-#Init Window
+	def seed():
+		rand1=rng.integers(line_countb)
+		numpy.random.seed()
+		rand2=rng.integers(line_countb)
+		numpy.random.seed()
+		rand3=rng.integers(line_countb)
+		randomGen(rand1,rand2,rand3)
+
+	def randomGen(x,y,z):
+		firstName = linecache.getline(f'src/Lists/Names/{namefileVal.get()}', x)
+		lastName = linecache.getline(f'src/Lists/Names/{namefileVal.get()}', y)
+		jobName =  linecache.getline(f'src/Lists/Jobs/{jobfileVal.get()}', z)
+		nameStr=f'{ii+1} First:{firstName.rstrip()} Last:{lastName}'
+		jobStr=f'Job:{jobName}'
+		nameList.append(nameStr.strip())
+		occupationList.append(jobStr.strip())
+
+	if jobstateVal.get()!=1: #Merge
+		num=0
+		nameList.clear()
+		outputField.insert('1.0','Generated:\n')
+
+		for ii in range(0, quantity):
+			seed()
+			num=0
+			if num<amount:
+				num+=1
+				outputField.insert(f'{ii+2}.0',f'{nameList[ii]}\n')
+
+	elif jobstateVal.get()==1:
+		num=0
+		nameList.clear()
+		outputField.insert('1.0','Generated:\n')
+		for ii in range(0, quantity):
+			seed()
+			num=0
+			if num<amount:
+				num+=1
+				outputField.insert(f'{ii+2}.0',f'{nameList[ii]} {occupationList[ii]}\n')
+
 window = tk.Tk()
-ttk.Style().theme_use('clam')
-window.configure(bg='#9932cc')
-window.title('NPC-reator')
-#Name
-namefileVal=tk.StringVar()
-namefileVal.set('devNames.txt')
-nameMenu=tk.OptionMenu(window, namefileVal,*nameFiles)
-nameMenu.configure(background="#dda0dd")
-nameMenu.grid(row=0,column=8)
-nameLabel=tk.Label(text='Name List:',bg='#dda0dd').grid(row=0,column=6)
-#Job
-jobfileVal = tk.StringVar()
-jobfileVal.set('devOccupations.txt')
-#
-jobMenu = tk.OptionMenu(window, jobfileVal,*jobFiles)
-jobMenu.configure(background="#dda0dd")
-jobMenu.grid(row=0,column=10)
-#
-jobState= tk.IntVar()
-jobToggle= tk.Checkbutton(text='Job List:',variable=jobState,bg='#dda0dd').grid(row=0,column=9)
-#Num
-numLabel = tk.Label(window,text='Quantity:',bg='#dda0dd').grid(row=0,column=11)
+style = ttk.Style(window)
+bgColor='#9932cc'
+fgColor='#e6e6fa'
+window.configure(bg=f'{bgColor}')
 numVal = tk.IntVar()
 numVal.set(5)
-numEntry = tk.OptionMenu(window, numVal, *numList)
-numEntry.configure(background="#dda0dd")
-numEntry.grid(row=0,column=12)
-#Other
-start = tk.Button(window, text = 'Run', bg='#dda0dd', command=main).grid(row=0,column=3)
-output=tk.Text(height=25,width=75, bg='#dda0dd')
-output.grid(row=0,column=1)
-label = tk.Label(text='NPC-reator',bg='#dda0dd').grid(row=0,column=0)
+numLabel = ttk.Label(window,text='  Quantity:',style='TLabel')#.grid(row=0,column=11)
+numMenu=ttk.OptionMenu(window, numVal, *numList,style='TMenubutton')#.grid(row=0,column=12)
+
+jobstateVal= tk.IntVar()
+jobfileVal = tk.StringVar()
+jobfileVal.set(jobFiles[0])
+jobLabel = ttk.Checkbutton(text=' Job List:',variable=jobstateVal)
+jobMenu = ttk.OptionMenu(window, jobfileVal,*jobFiles,style='TMenubutton')#.grid(row=0,column=10)
+
+namefileVal=tk.StringVar()
+namefileVal.set(nameFiles[0])
+nameLabel=ttk.Label(text='Name List:',style='TLabel')#.grid(row=0,column=6)
+nameMenu=ttk.OptionMenu(window, namefileVal,*nameFiles,style='TMenubutton')#.grid(row=0,column=8)
+savestateVal=tk.IntVar()
+saveVal = tk.IntVar()
+saveVal.set('')
+saveLabel=tk.Checkbutton(text='Clear First?',variable=savestateVal)
+saveButton = ttk.Button(window, text = 'Save', command=save,style='TButton')#.grid(row=0,column=3)
+saveField=tk.Text(height=10,width=65, bg=f'{fgColor}')
+
+outputField=tk.Text(height=10,width=65, bg=f'{fgColor}')
+
+
+startButton = ttk.Button(window, text = 'Run', command=main,style='TButton')#.grid(row=0,column=3)
+
+
+window.title('NPC-reator')
+
+
+outputField.grid(row=0,column=1,sticky='e')
+nameLabel.grid(row=4,column=2,sticky='ne')
+nameMenu.grid(row=5,column=2,sticky='ne')
+startButton.grid(row=1,column=2,sticky='e')
+jobLabel.grid(row=6,column=2,sticky='ne')
+jobMenu.grid(row=7,column=2,sticky='e')
+numLabel.grid(row=2,column=2,sticky='e')
+numMenu.grid(row=3, column=2,sticky='ne')
+
+saveButton.grid(row=1,column=3,sticky='w')
+saveField.grid(row=0,column=4,sticky='w')
+saveLabel.grid(row=2,column=3,sticky='nw')
+
+
+
+
+
+
+window.protocol("WM_DELETE_WINDOW", onExit)
 window.mainloop()
+
 
 
